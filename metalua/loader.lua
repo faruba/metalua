@@ -110,7 +110,7 @@ end
 -- Placed after lua/luac loader, so precompiled files have
 -- higher precedence.
 ----------------------------------------------------------------------
-table.insert(M.loaders, M.metalua_loader)
+table.insert(M.searchers, M.metalua_loader)
 
 ----------------------------------------------------------------------
 -- Load an extension.

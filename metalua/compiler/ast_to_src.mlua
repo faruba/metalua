@@ -166,7 +166,7 @@ function M:node (node)
    else
       local f = M[node.tag]
       if type (f) == "function" then -- Delegate to tag method.
-         f (self, node, unpack (node))
+         f (self, node, table.unpack (node))
       elseif type (f) == "string" then -- tag string.
          self:acc (f)
       else -- No appropriate method, fall back to splice dumping.

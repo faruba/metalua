@@ -19,7 +19,6 @@
 --
 -- This extension implements list comprehensions, similar to Haskell and
 -- Python syntax, to easily describe lists.
---
 -- * x[a ... b] is the list { x[a], x[a+1], ..., x[b] }
 -- * { f()..., b } contains all the elements returned by f(), then b
 --   (allows to expand list fields other than the last one)
@@ -160,7 +159,7 @@ end
 -------------------------------------------------------------------------------
 -- Back-end for loops with a multi-element header
 local function loop_builder(x)
-   local first, elements, body = unpack(x)
+   local first, elements, body = table.unpack(x)
 
    -- Change continue statements into gotos.
    if SUPPORT_CONTINUE then transform_continue_statements(body) end

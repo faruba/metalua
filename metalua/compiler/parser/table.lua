@@ -71,7 +71,7 @@ return function(M)
     -- complete table constructor including [{...}]
     --------------------------------------------------------------------------------
     -- TODO beware, stat and expr use only table.content, this can't be patched.
-    M.table.table = gg.sequence{ "{", _table.content, "}", builder = unpack }
+    M.table.table = gg.sequence{ "{", _table.content, "}", builder = table.unpack }
 
     return M
 end

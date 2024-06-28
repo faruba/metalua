@@ -593,7 +593,7 @@ function M.list (p)
       -- or a separator immediately ahead
       ------------------------------------------------------
       local function peek_is_in (keywords)
-         return keywords and lx:is_keyword(lx:peek(), unpack(keywords)) end
+         return keywords and lx:is_keyword(lx:peek(), table.unpack(keywords)) end
 
       local x = { }
       local fli = lx :lineinfo_right()
@@ -689,7 +689,7 @@ function M.onkeyword (p)
    -- Parsing method
    -------------------------------------------------------------------
    function p :parse (lx)
-      if lx :is_keyword (lx:peek(), unpack(self.keywords)) then
+      if lx :is_keyword (lx:peek(), table.unpack(self.keywords)) then
          local fli = lx:lineinfo_right()
          if not self.peek then lx:next() end
          local content = self.primary (lx)
@@ -735,7 +735,7 @@ function M.optkeyword (...)
    end
    for _, v in ipairs(args) do assert (type(v)=="string") end
    return function (lx)
-      local x = lx:is_keyword (lx:peek(), unpack (args))
+      local x = lx:is_keyword (lx:peek(), table.unpack (args))
       if x then lx:next(); return x
       else return false end
    end
@@ -762,7 +762,7 @@ function M.with_lexer(new_lexer, parser)
    -- its arguments in a list:
    -------------------------------------------------------------------
    if not parser and #new_lexer==2 and type(new_lexer[1])=='table' then
-      return M.with_lexer(unpack(new_lexer))
+      return M.with_lexer(table.unpack(new_lexer))
    end
 
    -------------------------------------------------------------------

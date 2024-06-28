@@ -79,12 +79,12 @@ return function(M)
           gg.onkeyword{ "|", _A.tf },
           "]",
           builder = function(x)
-              local fields, other = unpack(x)
+              local fields, other = table.unpack(x)
               return { tag='TTable', other or {tag='TField'}, fields }
           end }, -- "[ ... ]"
         { '(', _A.tebar_content, ')', '->', '(', _A.tebar_content, ')',
           builder = function(x)
-               local p, r = unpack(x)
+               local p, r = table.unpack(x)
                return {tag='TFunction', p, r }
            end } }
 

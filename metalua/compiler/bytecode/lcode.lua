@@ -223,6 +223,7 @@ end
 --
 ------------------------------------------------------------------------
 --FF updated 5.1
+
 function luaK:patchtestreg(fs, node, reg)
    assert(reg) -- pour assurer, vu que j'ai ajoute un parametre p/r a 5.0
    local i = self:getjumpcontrol(fs, node)

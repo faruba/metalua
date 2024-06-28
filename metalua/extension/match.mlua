@@ -153,7 +153,7 @@ local function table_pattern_element_builder (pattern, term, cfg)
    for i = 1, #pattern do
       local key, sub_pattern
       if pattern[i].tag=="Pair" then -- Explicit key/value pair
-         key, sub_pattern = unpack (pattern[i])
+         key, sub_pattern = table.unpack (pattern[i])
          assert (literal_tags[key.tag], "Invalid key")
       else -- Implicit key
          len, key, sub_pattern = len+1, `Number{ len+1 }, pattern[i]
@@ -185,7 +185,7 @@ local function table_pattern_element_builder (pattern, term, cfg)
       -- will be overridden in contrieved tables.
       -- ==> save it now, and clean the setting statement if unused
       if cfg.dots_replacement then cfg.dots_replacement = 'ambiguous'
-      else cfg.dots_replacement = +{ select (-{`Number{len}}, unpack(-{term})) } end
+      else cfg.dots_replacement = +{ select (-{`Number{len}}, table.unpack(-{term})) } end
    else -- Check arity
       acc_test (+{ #-{term} ~= -{`Number{len}} }, cfg)
    end
@@ -220,7 +220,7 @@ function pattern_element_builder (pattern, term, cfg)
 end
 
 function eq_pattern_element_builder (pattern, term, cfg)
-   local _, pat1, pat2 = unpack (pattern)
+   local _, pat1, pat2 = table.unpack (pattern)
    local ntmp_save = cfg.ntmp
    pattern_element_builder (pat1, term, cfg)
    cfg.ntmp = ntmp_save
@@ -230,7 +230,7 @@ end
 -- pattern :: `Op{ 'div', string, list{`Id string} or `Id{ string }}
 -- term    :: expr
 local function regexp_pattern_element_builder (pattern, term, cfg)
-   local op, regexp, sub_pattern = unpack(pattern)
+   local op, regexp, sub_pattern = table.unpack(pattern)
 
    -- Sanity checks --
    assert (op=='div', "Don't know what to do with that op in a pattern")
@@ -284,7 +284,7 @@ end
 --   label on_failure_i
 --------------------------------------------------
 local function case_builder (case, term_seq, cfg)
-   local patterns_group, guard, block = unpack(case)
+   local patterns_group, guard, block = table.unpack(case)
    local on_success = gg.gensym 'on_success' [1]
    for i = 1, #patterns_group do
       local pattern_seq = patterns_group[i]
@@ -308,7 +308,7 @@ local function case_builder (case, term_seq, cfg)
 end
 
 local function match_builder (x)
-   local term_seq, cases = unpack(x)
+   local term_seq, cases = table.unpack(x)
    local cfg = {
       code          = `Do{ },
       after_success = gg.gensym "_after_success" }

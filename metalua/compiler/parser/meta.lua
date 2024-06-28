@@ -110,7 +110,7 @@ return function(M)
         end
     end
 
-    M.meta.splice = gg.sequence{ "-{", _MM.splice_content, "}", builder=unpack }
+    M.meta.splice = gg.sequence{ "-{", _MM.splice_content, "}", builder=table.unpack }
 
     --------------------------------------------------------------------------------
     -- Parse the inside of a "+{ ... }"

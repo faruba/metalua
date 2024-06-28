@@ -287,7 +287,7 @@ function M.sprintf(fmt, ...)
         if t=='table' then args[i]=M.tostring(v)
         elseif t=='nil' then args[i]='nil' end
     end
-    return string.format(fmt, unpack(args))
+    return string.format(fmt, table.unpack(args))
 end
 
 function M.printf(...) print(M.sprintf(...)) end

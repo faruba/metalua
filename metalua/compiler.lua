@@ -48,9 +48,21 @@ local M  = { }
 -- M.sequence goes for numbers to format names, M.order goes from format
 -- names to numbers.
 --------------------------------------------------------------------------------
-M.sequence = {
-	'srcfile',  'src', 'lexstream', 'ast', 'proto', 'bytecode', 'function' }
+--M.sequence = {
+--	'srcfile',  'src', 'lexstream', 'ast', 'proto', 'bytecode', 'function' 
+--}
 
+-- FF by faruba
+--------------------------------------------------------------------------------
+-- 我觉得bytecode 阶段没有什么必要,从使用者的角度上来说,到AST这层就够了,如果走 src => lexer => ast
+-- => generator => src 那就只要保证最终生成的代码是符合语法的,那么就可以自动适配各种版本的lua.
+-- 如何lua的版本变化导致语法扩充, 简单的扩展/修改 generator 就可以了, 不需要考虑如何处理bytecode
+-- 我要做的是CTMP(complie time meta programing),而且尽量不依赖于lua宿主环境.不触及btyecode还是
+-- 可以的,
+--------------------------------------------------------------------------------
+M.sequence = {
+	'srcfile',  'src', 'lexstream', 'ast', 'function'
+}
 local arg_types = {
 	srcfile    = { 'string', '?string' },
 	src        = { 'string', '?string' },
@@ -101,6 +113,8 @@ end
 
 function CONV :lexstream_to_ast(lx, name)
 	checks('metalua.compiler', 'lexer.stream', '?string')
+	local pp = require 'metalua.pprint'
+	--pp.printf("========? %s, %s", name, lx)
 	local r = self.parser.chunk(lx)
 	r.source = name
     if M.check_ast then M.check_ast (r) end
@@ -133,6 +147,16 @@ function CONV :bytecode_to_function(bc, name)
 	checks('metalua.compiler', 'string', '?string')
 	return loadstring(bc, name)
 end
+function CONV :ast_to_function(ast, name)
+	local pp = require 'metalua.pprint'
+	pp.printf(">>> %s  %s",ast,name)
+	--package.path = package.path .. ";3rd/lua-parser/?.lua"
+	--local lpp = require 'lua-parser.pp'
+	--local v = lpp.dump(ast,4)
+	local ret = require 'metalua.compiler.ast_to_function' (ast)
+	pp.printf("========v %s", ret)
+	return ret
+end
 
 -- Create all sensible combinations
 for i=1,#M.sequence do
@@ -148,7 +172,7 @@ for i=1,#M.sequence do
 			table.insert (functions, f)
 		end
 		CONV[dst_name] = function(self, a, b)
-			checks('metalua.compiler', unpack(my_arg_types))
+			checks('metalua.compiler', table.unpack(my_arg_types))
 			for _, f in ipairs(functions) do
 				a, b = f(self, a, b)
 			end

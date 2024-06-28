@@ -105,7 +105,7 @@ return function(M)
             if #exprs < 2 or #exprs > 3 then
                 gg.parse_error (lx, "numeric for requires 2 or 3 boundaries")
             end
-            return { tag="Fornum", vars[1], unpack (exprs) }
+            return { tag="Fornum", vars[1], table.unpack (exprs) }
         else
             if not lx :is_keyword (lx :next(), "in") then
                 gg.parse_error (lx, '"=" or "in" expected in for loop')
@@ -140,7 +140,7 @@ return function(M)
     -- Function def builder
     ----------------------------------------------------------------------------
     local function funcdef_builder(x)
-        local name, method, func = unpack(x)
+        local name, method, func = table.unpack(x)
         if method then
             name = { tag="Index", name, method,
                      lineinfo = {
@@ -162,7 +162,7 @@ return function(M)
         local cond_block_pairs, else_block, r = x[1], x[2], {tag="If"}
         local n_pairs = #cond_block_pairs
         for i = 1, n_pairs do
-            local cond, block = unpack(cond_block_pairs[i])
+            local cond, block = table.unpack(cond_block_pairs[i])
             r[2*i-1], r[2*i] = cond, block
         end
         if else_block then table.insert(r, #r+1, else_block) end
@@ -182,7 +182,7 @@ return function(M)
         _M.expr,
         gg.onkeyword{ "#", gg.future(M, 'annot').tf },
         builder = function(x)
-            local e, a = unpack(x)
+            local e, a = table.unpack(x)
             if a then return { tag='Annot', e, a }
             else return e end
         end }
@@ -243,7 +243,7 @@ return function(M)
                 separators = ',' },
             gg.onkeyword{ "=", _M.expr_list },
             builder = function(x)
-                 local annotated_left, right = unpack(x)
+                 local annotated_left, right = table.unpack(x)
                  local left, annotations = annot.split(annotated_left)
                  return {tag="Local", left, right or { }, annotations }
              end } }
@@ -254,17 +254,17 @@ return function(M)
     M.stat = gg.multisequence {
         name = "statement",
         { "do", _M.block, "end", builder =
-          function (x) return { tag="Do", unpack (x[1]) } end },
+          function (x) return { tag="Do", table.unpack (x[1]) } end },
         { "for", _M.for_header, "do", _M.block, "end", builder =
           function (x) x[1][#x[1]+1] = x[2]; return x[1] end },
         { "function", func_name, method_name, _M.func_val, builder=funcdef_builder },
         { "while", _M.expr, "do", _M.block, "end", builder = "While" },
         { "repeat", _M.block, "until", _M.expr, builder = "Repeat" },
-        { "local", _M.local_stat_parser, builder = unpack },
+        { "local", _M.local_stat_parser, builder = table.unpack },
         { "return", return_expr_list_parser, builder =
           function(x) x[1].tag='Return'; return x[1] end },
         { "break", builder = function() return { tag="Break" } end },
-        { "-{", gg.future(M, 'meta').splice_content, "}", builder = unpack },
+        { "-{", gg.future(M, 'meta').splice_content, "}", builder = table.unpack },
         { "if", gg.nonempty(elseifs_parser), gg.onkeyword{ "else", M.block }, "end",
           builder = if_builder },
         default = assign_or_call_stat_parser }

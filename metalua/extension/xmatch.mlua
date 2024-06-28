@@ -29,7 +29,7 @@ require 'metalua.walk.id'
 -- Tag must be either "Localrec" or "Set".
 ----------------------------------------------------------------------
 named_match_function_builder = |tag| function (x)
-   local func_name, _, cases = unpack(x)
+   local func_name, _, cases = table.unpack(x)
    local arity = #cases[1][1][1]
    if arity==0 then
       error "There must be at least 1 case in match function"
@@ -89,7 +89,7 @@ mlp.expr:add{ 'match', builder = |x| x[1], gg.multisequence{
          match_cases_list_parser,
          'end',
          builder = function(x)
-            local _, cases = unpack(x)
+            local _, cases = table.unpack(x)
             local v        = mlp.gensym()
             local body     = match_builder{v, cases}
             return `Function{ {v}, {body} }
@@ -114,7 +114,7 @@ mlp.expr:add{ 'match', builder = |x| x[1], gg.multisequence{
             separators  = "|" },
          -- Notice: no "end" keyword!
          builder = function (x)
-            local tested_term_seq, _, cases = unpack(x)
+            local tested_term_seq, _, cases = table.unpack(x)
             local v = mlp.gensym 'match_expr'
             -- Replace expressions with blocks
             for _, case in ipairs (cases) do
@@ -126,7 +126,7 @@ mlp.expr:add{ 'match', builder = |x| x[1], gg.multisequence{
          end } } }
 
 function bind (x)
-   local patterns, values = unpack(x)
+   local patterns, values = table.unpack(x)
 
    -------------------------------------------------------------------
    -- Generate pattern code: "bind vars = vals" translates to:

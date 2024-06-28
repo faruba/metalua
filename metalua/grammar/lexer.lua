@@ -171,7 +171,7 @@ function M.new_comment(lines)
     local first = lines[1].lineinfo.first
     local last  = lines[#lines].lineinfo.last
     local lineinfo = M.new_lineinfo(first, last)
-    return setmetatable({lineinfo=lineinfo, unpack(lines)}, MT.comment)
+    return setmetatable({lineinfo=lineinfo, table.unpack(lines)}, MT.comment)
 end
 
 function MT.comment :text()
@@ -519,7 +519,7 @@ end
 -- Returns an object which saves the stream's current state.
 ----------------------------------------------------------------------
 -- FIXME there are more fields than that to save
-function lexer :save () return { self.i; {unpack(self.peeked) } } end
+function lexer :save () return { self.i; {table.unpack(self.peeked) } } end
 
 ----------------------------------------------------------------------
 -- Restore the stream's state, as saved by method [save].
@@ -651,7 +651,7 @@ end
 function lexer :clone()
     local alpha_clone, sym_clone = { }, { }
    for word in pairs(self.alpha) do alpha_clone[word]=true end
-   for letter, list in pairs(self.sym) do sym_clone[letter] = { unpack(list) } end
+   for letter, list in pairs(self.sym) do sym_clone[letter] = { table.unpack(list) } end
    local clone = { alpha=alpha_clone, sym=sym_clone }
    setmetatable(clone, self)
    clone.__index = clone

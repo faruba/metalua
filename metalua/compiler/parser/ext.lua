@@ -47,7 +47,7 @@ return function(M)
         else return { tag="Table", tagkey } end
     end
 
-    M.adt = gg.sequence{ "`", adt, builder = unpack }
+    M.adt = gg.sequence{ "`", adt, builder = table.unpack }
 
     M.expr.primary :add(M.adt)
 

@@ -169,7 +169,7 @@ return function(M)
     end
 
     -- chunk is wrapped in a sequence so that it has a "transformer" field.
-    M.chunk = gg.sequence { chunk, builder = unpack }
+    M.chunk = gg.sequence { chunk, builder = table.unpack }
 
     return M
 end

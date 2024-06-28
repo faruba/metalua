@@ -108,12 +108,12 @@ end
 -- removed "#if SIZE_Bx < BITS_INT-1" test, assume this script is
 -- running on a Lua VM with double or int as LUA_NUMBER
 
-luaP.MAXARG_Bx  = math.ldexp(1, luaP.SIZE_Bx) - 1
+luaP.MAXARG_Bx  = (1* 2^luaP.SIZE_Bx) - 1
 luaP.MAXARG_sBx = math.floor(luaP.MAXARG_Bx / 2)  -- 'sBx' is signed
 
-luaP.MAXARG_A = math.ldexp(1, luaP.SIZE_A) - 1
-luaP.MAXARG_B = math.ldexp(1, luaP.SIZE_B) - 1
-luaP.MAXARG_C = math.ldexp(1, luaP.SIZE_C) - 1
+luaP.MAXARG_A = (1*2^luaP.SIZE_A) - 1
+luaP.MAXARG_B = (1*2^luaP.SIZE_B) - 1
+luaP.MAXARG_C = (1*2^luaP.SIZE_C) - 1
 
 -- creates a mask with 'n' 1 bits at position 'p'
 -- MASK1(n,p) deleted
@@ -281,7 +281,7 @@ luaP.OpCode = {}   -- lookup name -> number
 luaP.ROpCode = {}  -- lookup number -> name
 
 local i = 0
-for v in string.gfind([[
+for v in string.gmatch([[
 MOVE -- 0
 LOADK
 LOADBOOL

@@ -187,13 +187,13 @@ function luaU:from_int(x, size)
   x = math.floor(x)
   if x >= 0 then
     for i = 1, size do
-      v = v..string.char(math.mod(x, 256)); x = math.floor(x / 256)
+      v = v..string.char(x % 256); x = math.floor(x / 256)
     end
   else -- x < 0
     x = -x
     local carry = 1
     for i = 1, size do
-      local c = 255 - math.mod(x, 256) + carry
+      local c = 255 - (x % 256) + carry
       if c == 256 then c = 0; carry = 1 else carry = 0 end
       v = v..string.char(c); x = math.floor(x / 256)
     end

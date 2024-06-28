@@ -77,11 +77,11 @@ M.tags.expr = table_transpose{
 function M.traverse.stat (cfg, x, ...)
    if M.debug then pp.printf("traverse stat %s", x) end
    local ancestors = {...}
-   local B  = |y| M.block       (cfg, y, x, unpack(ancestors)) -- Block
-   local S  = |y| M.stat        (cfg, y, x, unpack(ancestors)) -- Statement
-   local E  = |y| M.expr        (cfg, y, x, unpack(ancestors)) -- Expression
-   local EL = |y| M.expr_list   (cfg, y, x, unpack(ancestors)) -- Expression List
-   local IL = |y| M.binder_list (cfg, y, x, unpack(ancestors)) -- Id binders List
+   local B  = |y| M.block       (cfg, y, x, table.unpack(ancestors)) -- Block
+   local S  = |y| M.stat        (cfg, y, x, table.unpack(ancestors)) -- Statement
+   local E  = |y| M.expr        (cfg, y, x, table.unpack(ancestors)) -- Expression
+   local EL = |y| M.expr_list   (cfg, y, x, table.unpack(ancestors)) -- Expression List
+   local IL = |y| M.binder_list (cfg, y, x, table.unpack(ancestors)) -- Id binders List
    local OS = || cfg.scope :save()                             -- Open scope
    local CS = || cfg.scope :restore()                          -- Close scope
 
@@ -108,20 +108,20 @@ function M.traverse.stat (cfg, x, ...)
    | `Call{...}|`Invoke{...}|`Return{...} -> EL(x)
    | `Break | `Goto{ _ } | `Label{ _ }    -> -- nothing
    | { tag=tag, ...} if M.tags.stat[tag]->
-      M.malformed (cfg, x, unpack (ancestors))
+      M.malformed (cfg, x, table.unpack (ancestors))
    | _ ->
-      M.unknown (cfg, x, unpack (ancestors))
+      M.unknown (cfg, x, table.unpack (ancestors))
    end
 end
 
 function M.traverse.expr (cfg, x, ...)
    if M.debug then pp.printf("traverse expr %s", x) end
    local ancestors = {...}
-   local B  = |y| M.block       (cfg, y, x, unpack(ancestors)) -- Block
-   local S  = |y| M.stat        (cfg, y, x, unpack(ancestors)) -- Statement
-   local E  = |y| M.expr        (cfg, y, x, unpack(ancestors)) -- Expression
-   local EL = |y| M.expr_list   (cfg, y, x, unpack(ancestors)) -- Expression List
-   local IL = |y| M.binder_list (cfg, y, x, unpack(ancestors)) -- Id binders list
+   local B  = |y| M.block       (cfg, y, x, table.unpack(ancestors)) -- Block
+   local S  = |y| M.stat        (cfg, y, x, table.unpack(ancestors)) -- Statement
+   local E  = |y| M.expr        (cfg, y, x, table.unpack(ancestors)) -- Expression
+   local EL = |y| M.expr_list   (cfg, y, x, table.unpack(ancestors)) -- Expression List
+   local IL = |y| M.binder_list (cfg, y, x, table.unpack(ancestors)) -- Id binders list
    local OS = || cfg.scope :save()                             -- Open scope
    local CS = || cfg.scope :restore()                          -- Close scope
 
@@ -132,15 +132,15 @@ function M.traverse.expr (cfg, x, ...)
    | `Op{ opid, ... }          -> E(x[2]); if #x==3 then E(x[3]) end
    | `Function{ params, body } -> OS(body); IL(params); B(body); CS(body)
    | `Stat{ b, e }             -> OS(b); B(b); E(e); CS(b)
-   | `Id{ name }               -> M.occurrence(cfg, x, unpack(ancestors))
+   | `Id{ name }               -> M.occurrence(cfg, x, table.unpack(ancestors))
    | `Table{ ... }             ->
       for i = 1, #x do match x[i] with
          | `Pair{ k, v } -> E(k); E(v)
          | v             -> E(v)
       end end
    | `Nil|`Dots|`True|`False|`Number{_}|`String{_} -> -- terminal node
-   | { tag=tag, ...} if M.tags.expr[tag]-> M.malformed (cfg, x, unpack (ancestors))
-   | _ -> M.unknown (cfg, x, unpack (ancestors))
+   | { tag=tag, ...} if M.tags.expr[tag]-> M.malformed (cfg, x, table.unpack (ancestors))
+   | _ -> M.unknown (cfg, x, table.unpack (ancestors))
    end
 end
 

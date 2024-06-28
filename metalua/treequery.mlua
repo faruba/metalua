@@ -250,7 +250,7 @@ function Q :first()
    local result = { }
    local function f(...) result = {...}; error() end
    pcall(|| self :foreach(f))
-   return unpack(result)
+   return table.unpack(result)
 end
 
 --- Pretty printer for queries
@@ -342,7 +342,7 @@ function M.binder(occurrence, root)
         -- TODO: break the walker
     end
     walk.guess(cfg, root)
-    return unpack(result)
+    return table.unpack(result)
 end
 
 --- Predicate to filter occurrences of a given binder.
@@ -360,7 +360,7 @@ end
 --         if not scope then return nil end
 --         local result = scope :get (node[1]) or { }
 --         if result[1] ~= binder then return nil end
---         return unpack(result)
+--         return table.unpack(result)
 --     end
 -- end
 
@@ -376,7 +376,7 @@ function M.get_binder(occurrence, ...)
     if M.is_binder(occurrence, ...) then return nil end
     local scope = ACTIVE_SCOPE[occurrence]
     local binder_hierarchy = scope :get(occurrence[1])
-    return unpack (binder_hierarchy or { })
+    return table.unpack (binder_hierarchy or { })
 end
 
 --- Transform a predicate on a node into a predicate on this node's

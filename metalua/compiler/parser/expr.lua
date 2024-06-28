@@ -55,7 +55,7 @@ return function(M)
     M.method_args = gg.multisequence{
         name = "function argument(s)",
         { "{",  _table.content, "}" },
-        { "(",  _M.func_args_content, ")", builder = unpack },
+        { "(",  _M.func_args_content, ")", builder = table.unpack },
         { "+{", _meta.quote_content, "}" },
         -- TODO lineinfo?
         function(lx) local r = M.opt_string(lx); return r and {r} or { } end }
@@ -79,7 +79,7 @@ return function(M)
         name = "function body",
         "(", _M.func_params_content, ")", _M.block, "end",
         builder = function(x)
-             local params, body = unpack(x)
+             local params, body = table.unpack(x)
              local annots, some = { }, false
              for i, p in ipairs(params) do
                  if p.tag=='Annot' then
@@ -102,7 +102,8 @@ return function(M)
             if a.tag=='Eof' then
                 msg = "End of file reached when an expression was expected"
             elseif a.tag=='Keyword' then
-                msg = "An expression was expected, and `"..a[1]..
+                print(a[1],"===?")
+                msg = "An expression was expected, and `----"..a[1]..
                     "' can't start an expression"
             else
                 msg = "Unexpected expr token " .. pp.tostring (a)
@@ -151,14 +152,14 @@ return function(M)
         primary = gg.multisequence{
             name = "expr primary",
             { "(", _M.expr, ")",               builder = "Paren" },
-            { "function", _M.func_val,         builder = unpack },
-            { "-{", _meta.splice_content, "}", builder = unpack },
-            { "+{", _meta.quote_content, "}",  builder = unpack },
+            { "function", _M.func_val,         builder = table.unpack },
+            { "-{", _meta.splice_content, "}", builder = table.unpack },
+            { "+{", _meta.quote_content, "}",  builder = table.unpack },
             { "nil",                           builder = "Nil" },
             { "true",                          builder = "True" },
             { "false",                         builder = "False" },
             { "...",                           builder = "Dots" },
-            { "{", _table.content, "}",        builder = unpack },
+            { "{", _table.content, "}",        builder = table.unpack },
             _M.id_or_literal },
 
         infix = {
@@ -192,12 +193,12 @@ return function(M)
             { ".", _M.id, builder = function (tab, field)
               return {tag="Index", tab, _M.id2string(field[1])} end },
             { "(", _M.func_args_content, ")", builder = function(f, args)
-              return {tag="Call", f, unpack(args[1])} end },
+              return {tag="Call", f, table.unpack(args[1])} end },
             { "{", _table.content, "}", builder = function (f, arg)
               return {tag="Call", f, arg[1]} end},
             { ":", _M.id, _M.method_args, builder = function (obj, post)
-              local m_name, args = unpack(post)
-              return {tag="Invoke", obj, _M.id2string(m_name), unpack(args)} end},
+              local m_name, args = table.unpack(post)
+              return {tag="Invoke", obj, _M.id2string(m_name), table.unpack(args)} end},
             { "+{", _meta.quote_content, "}", builder = function (f, arg)
               return {tag="Call", f,  arg[1] } end },
             default = { name="opt_string_arg", parse = _M.opt_string, builder = function(f, arg)
